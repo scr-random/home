@@ -11,35 +11,24 @@
 
     <style>
     :root {
-        /* --- DESKTOP / DEFAULT SETTINGS --- */
-        --app-scale: 1.7; 
+        /* FLUID SCALE */
+        /* smoothly scales from 0.85 to 1.7 based on screen width */
+        
+        --app-scale: clamp(0.8, 0.5vw + 0.6, 1.7); 
+        
         --internal-width: 320px;
         --internal-height: 450px;
         --raw-width: 392px;
         --raw-height: 620px;
 
-        /* Adjust these to move the app on PC */
-        --shift-x: 0%;    /* Positive = Right, Negative = Left */
-        --shift-y: 4%;   /* Positive = Down, Negative = Up */
+        /* Consistent offsets that work with the fluid scale */
+        --shift-x: 0%;    
+        --shift-y: -2.5%; 
     }
 
-    /* --- TABLET SETTINGS --- */
-    @media (max-width: 325px) {
-        :root { 
-            --app-scale: 1.2;
-            --shift-x: 9%; 
-            --shift-y: 20%; 
-        }
-    }
-
-    /* --- MOBILE SETTINGS (e.g., iPhone SE) --- */
-    @media (max-width: 600px) {
-        :root { 
-            --app-scale: 1; 
-            /* Adjust these specifically for mobile phones */
-            --shift-x: 9%;   
-            --shift-y: 18%;  
-        }
+    
+    /* Ensure the box height adjusts */
+    @media (max-width: 800px) {
         #app-wrapper {
             height: calc(var(--internal-height) * var(--app-scale));
         }
@@ -53,7 +42,7 @@
     }
     
     .container { 
-        max-width: 1200px; margin: auto; padding: 30px 20px; 
+        max-width: 900px; margin: auto; padding: 10px 20px; 
         background: #5C6971; border-radius: 15px; 
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
@@ -78,14 +67,9 @@
         height: var(--raw-height);
         border: none;
         flex-shrink: 0;
-
-        /* Use the variables here for dynamic control */
         transform: translate(var(--shift-x), var(--shift-y)) scale(var(--app-scale));
         transform-origin: center center;
     }
-
-    .title-image { max-width: 100%; height: auto; margin-bottom: 15px; }
-    .repo-link a { color: #2F8CF9; text-decoration: none; font-weight: bold; }
 </style>
 </head>
 <body>
