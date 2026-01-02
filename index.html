@@ -11,19 +11,22 @@
 
     <style>
         :root {
-            --app-scale: 1.7; 
-            --internal-width: 320px;
-            --internal-height: 450px;
-            --offset-x: -36px;
-            --offset-y: -37px;
+            /* BEZELS */
+            --app-scale: 1.7;          /* Desktop scale */
+            --internal-width: 320px;   
+            --internal-height: 450px;  
+            
+            /* external embed dims */
+            --raw-width: 392px;
+            --raw-height: 620px;
         }
 
+        /* 2. RESPONSIVE SCALING */
+        @media (max-width: 1024px) {
+            :root { --app-scale: 1.1; } /* Tablet */
+        }
         @media (max-width: 600px) {
-            :root {
-                --app-scale: 1; 
-                --offset-x: 0px; 
-                --offset-y: 36px;
-            }
+            :root { --app-scale: 1; } /* Phone */
         }
 
         body { 
@@ -31,7 +34,7 @@
             text-align: center; 
             background-color: #10203B; 
             margin: 0;
-            padding: 5px;
+            padding: 20px;
             color: #1C1C1C;
         }
         
@@ -44,130 +47,79 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* App Wrapper & Cropping */
+        .title-image {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .repo-link {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .repo-link a {
+            color: #2F8CF9;
+            text-decoration: none;
+        }
+
+        /* crop masker doohickey v1 */
         #app-wrapper {
+            /* The container size is calculated based on the scale */
             width: calc(var(--internal-width) * var(--app-scale));
             height: calc(var(--internal-height) * var(--app-scale));
-            margin: 15px auto;
-            overflow: hidden;
+            margin: 25px auto;
+            overflow: hidden; /* This hides the bezels */
             position: relative;
             border: 4px solid #1C1C1C;
             border-radius: 12px;
             background: #000;
-            transition: all 0.3s ease; /* Smooth transition when toggling */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
         }
 
         #app-wrapper iframe {
-            width: 392px;
-            height: 620px;
+            width: var(--raw-width);
+            height: var(--raw-height);
             border: none;
             position: absolute;
-            top: calc(var(--offset-y) * var(--app-scale));
-            left: calc(var(--offset-x) * var(--app-scale));
-            transform: scale(var(--app-scale));
-            transform-origin: top left;
+
+            /* CENTER-BASED CROPPING */
+            /* Places the iframe exactly in the center of the wrapper */
+            top: 50%;
+            left: 50%;
+            
+            /* Translate(-50%, -50%) centers it. 
+               We use -46.5% on the Y-axis to nudge it upward slightly 
+               to hide the "Built on Code Studio" footer. */
+            transform: translate(-50%, -46.5%) scale(var(--app-scale));
+            transform-origin: center center;
         }
 
-        /* Fullscreen Mode Styles */
-        #app-wrapper.fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            border: none;
-            border-radius: 0;
-            background: #10203B;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .footer-logo {
+            margin-top: 30px;
         }
-
-        /* Adjusting the scale in Fullscreen to fit screen height */
-        #app-wrapper.fullscreen iframe {
-            --fs-scale: 2.1; /* Scale for desktop fullscreen */
-            transform: scale(var(--fs-scale));
-            top: calc(var(--offset-y) * var(--fs-scale) + 50% - (var(--internal-height) * var(--fs-scale) / 2));
-            left: calc(var(--offset-x) * var(--fs-scale) + 50% - (var(--internal-width) * var(--fs-scale) / 2));
-        }
-
-        /* Fullscreen Mobile override */
-        @media (max-width: 600px) {
-            #app-wrapper.fullscreen iframe {
-                --fs-scale: 1.4; /* Scale for mobile fullscreen */
-            }
-        }
-
-        /* Button Styling */
-        .btn-action {
-            background: #1C1C1C;
-            color: white;
-            border: none;
-            padding: 10px 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Ubuntu', sans-serif;
-            margin: 10px;
-            transition: 0.2s;
-        }
-
-        .btn-action:hover { background: #2F8CF9; }
-
-        .title-image { max-width: 100%; height: auto; }
-        .repo-link a { color: #2F8CF9; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img style='width: 0.5; height: auto;' src="assets/randomizerlogostatic.png" alt="SCR Randomizer" class="title-image">
+        <img src="assets/randomizerlogostatic.png" alt="SCR Randomizer" class="title-image">
         
-        <p class="repo-link" style='font-size: 18px';>
-            Welcome! <b>Click the screen to start.</b> <br> <a href="https://github.com/scr-randomizer/home/">Visit the Repository</a>
+        <p class="repo-link">
+            Welcome! View the repository here: <br>
+            <a href="https://github.com/scr-randomizer/home/">github.com/scr-randomizer/home/</a>
         </p>
-
-        <button class="btn-action" onclick="toggleFullscreen()">Full Screen Mode</button>
-        <button class="btn-action" onclick="reloadApp()">Reload App</button>
         
         <div id="app-wrapper">
-            <iframe id="randomizer-app" src="https://studio.code.org/projects/applab/oX2jWo6MP1MyG8B7RbwRQEXkhEfASOZKkOQTkTyByxR/embed?nosource"></iframe>
+            <iframe src="https://studio.code.org/projects/applab/oX2jWo6MP1MyG8B7RbwRQEXkhEfASOZKkOQTkTyByxR/embed?nosource"></iframe>
         </div>
 
-        <div style="margin-top: 20px;">
+        <div class="footer-logo">
             <a href='https://ko-fi.com/R6R71RH2ZF' target='_blank'>
-                <img height='36' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' alt='Buy Me a Coffee' />
+                <img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee' />
             </a>
         </div>
     </div>
-
-    <script>
-        function toggleFullscreen() {
-            const app = document.getElementById('app-wrapper');
-            app.classList.toggle('fullscreen');
-            
-            // Change button text based on state
-            const btn = document.querySelector('.btn-action');
-            if(app.classList.contains('fullscreen')) {
-                btn.innerText = "Exit Full Screen";
-            } else {
-                btn.innerText = "Full Screen Mode";
-            }
-        }
-
-        function reloadApp() {
-            const iframe = document.getElementById('randomizer-app');
-            iframe.src = iframe.src; // Simple way to refresh an iframe
-        }
-
-        // Allow pressing 'Esc' to exit fullscreen
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") {
-                const app = document.getElementById('app-wrapper');
-                if(app.classList.contains('fullscreen')) toggleFullscreen();
-            }
-        });
-    </script>
 
 </body>
 </html>
