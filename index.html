@@ -11,15 +11,19 @@
 
     <style>
         :root {
-            /* Desktop Scale*/
-            --app-scale: 1.7; 
-            
+            --app-scale: 1.3; 
             --internal-width: 320px;
             --internal-height: 450px;
-            
-            /* BEZEL */
             --offset-x: -36px;
             --offset-y: -37px;
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --app-scale: 0.9; 
+                --offset-x: -36px; 
+                --offset-y: -36px;
+            }
         }
 
         body { 
@@ -40,66 +44,78 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .title-image {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 15px;
-        }
-
-        /* crop iframe */
+        /* App Wrapper & Cropping */
         #app-wrapper {
             width: calc(var(--internal-width) * var(--app-scale));
             height: calc(var(--internal-height) * var(--app-scale));
-            margin: 25px auto;
+            margin: 15px auto;
             overflow: hidden;
             position: relative;
             border: 4px solid #1C1C1C;
             border-radius: 12px;
-            background: #000; /* Placeholder color while loading */
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            background: #000;
+            transition: all 0.3s ease; /* Smooth transition when toggling */
         }
 
         #app-wrapper iframe {
-            /* external embed dim */
             width: 392px;
             height: 620px;
             border: none;
             position: absolute;
-
-            /* scale/shift */
             top: calc(var(--offset-y) * var(--app-scale));
             left: calc(var(--offset-x) * var(--app-scale));
             transform: scale(var(--app-scale));
             transform-origin: top left;
         }
 
-        .repo-link {
-            font-weight: bold;
-            margin-bottom: 20px;
+        /* Fullscreen Mode Styles */
+        #app-wrapper.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            border: none;
+            border-radius: 0;
+            background: #10203B;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .repo-link a {
-            color: #2F8CF9;
-            text-decoration: none;
+        /* Adjusting the scale in Fullscreen to fit screen height */
+        #app-wrapper.fullscreen iframe {
+            --fs-scale: 2.1; /* Scale for desktop fullscreen */
+            transform: scale(var(--fs-scale));
+            top: calc(var(--offset-y) * var(--fs-scale) + 50% - (var(--internal-height) * var(--fs-scale) / 2));
+            left: calc(var(--offset-x) * var(--fs-scale) + 50% - (var(--internal-width) * var(--fs-scale) / 2));
         }
 
-        .repo-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* Mobile Responsiveness */
+        /* Fullscreen Mobile override */
         @media (max-width: 600px) {
-            :root {
-                /* mobile scale */
-                --app-scale: 0.9; 
-            }
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 20px 10px;
+            #app-wrapper.fullscreen iframe {
+                --fs-scale: 1.1; /* Scale for mobile fullscreen */
             }
         }
+
+        /* Button Styling */
+        .btn-action {
+            background: #1C1C1C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Ubuntu', sans-serif;
+            margin: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover { background: #2F8CF9; }
+
+        .title-image { max-width: 100%; height: auto; }
+        .repo-link a { color: #2F8CF9; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -108,20 +124,50 @@
         <img src="assets/randomizerlogostatic.png" alt="SCR Randomizer" class="title-image">
         
         <p class="repo-link">
-            Welcome! View the repository here: <br>
-            <a href="https://github.com/scr-randomizer/home/">github.com/scr-randomizer/home/</a>
+            Welcome! <a href="https://github.com/scr-randomizer/home/">Visit Repository</a>
         </p>
+
+        <button class="btn-action" onclick="toggleFullscreen()">Full Screen Mode</button>
+        <button class="btn-action" onclick="reloadApp()">Reload App</button>
         
         <div id="app-wrapper">
-            <iframe src="https://studio.code.org/projects/applab/oX2jWo6MP1MyG8B7RbwRQEXkhEfASOZKkOQTkTyByxR/embed?nosource"></iframe>
+            <iframe id="randomizer-app" src="https://studio.code.org/projects/applab/oX2jWo6MP1MyG8B7RbwRQEXkhEfASOZKkOQTkTyByxR/embed?nosource"></iframe>
         </div>
 
-        <div style="margin-top: 30px;">
+        <div style="margin-top: 20px;">
             <a href='https://ko-fi.com/R6R71RH2ZF' target='_blank'>
-                <img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+                <img height='36' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' alt='Buy Me a Coffee' />
             </a>
         </div>
     </div>
+
+    <script>
+        function toggleFullscreen() {
+            const app = document.getElementById('app-wrapper');
+            app.classList.toggle('fullscreen');
+            
+            // Change button text based on state
+            const btn = document.querySelector('.btn-action');
+            if(app.classList.contains('fullscreen')) {
+                btn.innerText = "Exit Full Screen";
+            } else {
+                btn.innerText = "Full Screen Mode";
+            }
+        }
+
+        function reloadApp() {
+            const iframe = document.getElementById('randomizer-app');
+            iframe.src = iframe.src; // Simple way to refresh an iframe
+        }
+
+        // Allow pressing 'Esc' to exit fullscreen
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                const app = document.getElementById('app-wrapper');
+                if(app.classList.contains('fullscreen')) toggleFullscreen();
+            }
+        });
+    </script>
 
 </body>
 </html>
