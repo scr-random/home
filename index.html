@@ -63,37 +63,38 @@
             text-decoration: none;
         }
 
-        /* crop masker doohickey v1 */
+        /* crop masker doohickey v2 with flex */
         #app-wrapper {
-            /* The container size is calculated based on the scale */
             width: calc(var(--internal-width) * var(--app-scale));
             height: calc(var(--internal-height) * var(--app-scale));
             margin: 25px auto;
-            overflow: hidden; /* This hides the bezels */
+            overflow: hidden;
             position: relative;
             border: 4px solid #1C1C1C;
             border-radius: 12px;
             background: #000;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+
+            
+            display: flex; /*!!!*/
+            justify-content: center;
+            align-items: center;
         }
 
         #app-wrapper iframe {
+            /* Fixed raw size of the embed */
             width: var(--raw-width);
             height: var(--raw-height);
             border: none;
-            position: absolute;
+            flex-shrink: 0; /* Prevents iframe from the squishing */
 
-            /* CENTER-BASED CROPPING */
-            /* Places the iframe exactly in the center of the wrapper */
-            top: 50%;
-            left: 50%;
-            
-            /* Translate(-50%, -50%) centers it. 
-               We use -46.5% on the Y-axis to nudge it upward slightly 
-               to hide the "Built on Code Studio" footer. */
-            transform: translate(-50%, -46.5%) scale(var(--app-scale));
-            transform-origin: center center;
-        }
+            /* The scale is the only transform we need now */
+            transform: scale(var(--app-scale));
+    
+            /* bottom bezels
+               Adjust for bottom text */
+            margin-top: calc(-18px * var(--app-scale)); 
+}
 
         .footer-logo {
             margin-top: 30px;
