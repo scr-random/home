@@ -63,11 +63,16 @@
             text-decoration: none;
         }
 
-        /* crop masker doohickey v2 with flex */
+        /* crop masker doohickey v2.1 with flex */
         #app-wrapper {
+            /* Standard Desktop Size */
             width: calc(var(--internal-width) * var(--app-scale));
             height: calc(var(--internal-height) * var(--app-scale));
+    
+            /* never let the box be wider than the screen */
+            max-width: calc(100vw - 40px); 
             margin: 25px auto;
+    
             overflow: hidden;
             position: relative;
             border: 4px solid #1C1C1C;
@@ -75,26 +80,36 @@
             background: #000;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 
-            
-            display: flex; /*!!!*/
+            /* !!! */
+            display: flex;
             justify-content: center;
             align-items: center;
         }
 
         #app-wrapper iframe {
-            /* Fixed raw size of the embed */
+            /* The iframe keeps its raw size to avoid internal UI distortion */
             width: var(--raw-width);
             height: var(--raw-height);
             border: none;
-            flex-shrink: 0; /* Prevents iframe from the squishing */
+            flex-shrink: 0;
 
-            /* The scale is the only transform we need now */
-            transform: scale(var(--app-scale));
-    
-            /* bottom bezels
-               Adjust for bottom text */
-            margin-top: calc(-18px * var(--app-scale)); 
-}
+            /* Combine scaling and the vertical nudge into one transform */
+            /* Adjust -46.5% to hide more/less of the footer bezel */
+            transform: translate(0, -2%) scale(var(--app-scale));
+            
+            /* shrink the app further for bite sized devices */
+            transform-origin: center center;
+        }
+
+        /* Specific fix for tiny screens (iPhone SE, etc.) */
+        @media (max-width: 400px) {
+            :root {
+                --app-scale: 0.85; /* Shrink the internal app to fit narrow width */
+            }
+            #app-wrapper {
+                height: calc(var(--internal-height) * 0.85);
+            }
+        }
 
         .footer-logo {
             margin-top: 30px;
