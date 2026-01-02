@@ -10,111 +10,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            /* BEZELS */
-            --app-scale: 1.7;          /* Desktop scale */
-            --internal-width: 320px;   
-            --internal-height: 450px;  
-            
-            /* external embed dims */
-            --raw-width: 392px;
-            --raw-height: 620px;
-        }
+    :root {
+        /* --- DESKTOP / DEFAULT SETTINGS --- */
+        --app-scale: 1.7; 
+        --internal-width: 320px;
+        --internal-height: 450px;
+        --raw-width: 392px;
+        --raw-height: 620px;
 
-        /* 2. RESPONSIVE SCALING */
-        @media (max-width: 1024px) {
-            :root { --app-scale: 1.1; } /* Tablet */
-        }
-        @media (max-width: 600px) {
-            :root { --app-scale: 1; } /* Phone */
-        }
+        /* Adjust these to move the app on PC */
+        --shift-x: 0%;    /* Positive = Right, Negative = Left */
+        --shift-y: -2%;   /* Positive = Down, Negative = Up */
+    }
 
-        body { 
-            font-family: 'Ubuntu', sans-serif; 
-            text-align: center; 
-            background-color: #10203B; 
-            margin: 0;
-            padding: 20px;
-            color: #1C1C1C;
+    /* --- TABLET SETTINGS --- */
+    @media (max-width: 1024px) {
+        :root { 
+            --app-scale: 1.2;
+            --shift-x: 0%; 
+            --shift-y: -2.5%; 
         }
-        
-        .container { 
-            max-width: 900px; 
-            margin: auto; 
-            padding: 30px 20px; 
-            background: #5C6971; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+    }
 
-        .title-image {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 15px;
+    /* --- MOBILE SETTINGS (e.g., iPhone SE) --- */
+    @media (max-width: 600px) {
+        :root { 
+            --app-scale: 0.85; 
+            /* Adjust these specifically for mobile phones */
+            --shift-x: -1%;   
+            --shift-y: -4%;  
         }
-
-        .repo-link {
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .repo-link a {
-            color: #2F8CF9;
-            text-decoration: none;
-        }
-
-        /* crop masker doohickey v2.1 with flex */
         #app-wrapper {
-            /* Standard Desktop Size */
-            width: calc(var(--internal-width) * var(--app-scale));
             height: calc(var(--internal-height) * var(--app-scale));
+        }
+    }
+
+    body { 
+        font-family: 'Ubuntu', sans-serif; 
+        text-align: center; 
+        background-color: #10203B; 
+        margin: 0; padding: 20px; color: #1C1C1C;
+    }
     
-            /* never let the box be wider than the screen */
-            max-width: calc(100vw - 40px); 
-            margin: 25px auto;
-    
-            overflow: hidden;
-            position: relative;
-            border: 4px solid #1C1C1C;
-            border-radius: 12px;
-            background: #000;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    .container { 
+        max-width: 900px; margin: auto; padding: 30px 20px; 
+        background: #5C6971; border-radius: 15px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
 
-            /* !!! */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    #app-wrapper {
+        width: calc(var(--internal-width) * var(--app-scale));
+        height: calc(var(--internal-height) * var(--app-scale));
+        max-width: calc(100vw - 40px);
+        margin: 25px auto;
+        overflow: hidden;
+        position: relative;
+        border: 4px solid #1C1C1C;
+        border-radius: 12px;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        #app-wrapper iframe {
-            /* The iframe keeps its raw size to avoid internal UI distortion */
-            width: var(--raw-width);
-            height: var(--raw-height);
-            border: none;
-            flex-shrink: 0;
+    #app-wrapper iframe {
+        width: var(--raw-width);
+        height: var(--raw-height);
+        border: none;
+        flex-shrink: 0;
 
-            /* Combine scaling and the vertical nudge into one transform */
-            /* Adjust to hide more/less of the footer bezel */
-            transform: translate(0, 10%) scale(var(--app-scale));
-            
-            /* shrink the app further for bite sized devices */
-            transform-origin: center center;
-        }
+        /* Use the variables here for dynamic control */
+        transform: translate(var(--shift-x), var(--shift-y)) scale(var(--app-scale));
+        transform-origin: center center;
+    }
 
-        /* Specific fix for tiny screens (iPhone SE, etc.) */
-        @media (max-width: 400px) {
-            :root {
-                --app-scale: 0.85; /* Shrink the internal app to fit narrow width */
-            }
-            #app-wrapper {
-                height: calc(var(--internal-height) * 0.85);
-            }
-        }
-
-        .footer-logo {
-            margin-top: 30px;
-        }
-    </style>
+    .title-image { max-width: 100%; height: auto; margin-bottom: 15px; }
+    .repo-link a { color: #2F8CF9; text-decoration: none; font-weight: bold; }
+</style>
 </head>
 <body>
 
