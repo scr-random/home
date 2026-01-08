@@ -11,73 +11,75 @@
 
     <style>
         :root {
-            /* These are the full dimensions of the Code.org embed with its frame */
-            --embed-raw-width: 392px;
-            --embed-raw-height: 620px;
+            /* Raw dimensions of the Code.org embed */
+            --raw-width: 392px;
+            --raw-height: 620px;
         }
 
         body { 
             font-family: 'Ubuntu', sans-serif; 
             text-align: center; 
-            background-color: #10203B; 
-            margin: 0; padding: 20px; color: #FFFFFF;
+            background-color: #10203B; /* Dark Blue Outer */
+            margin: 0; 
+            padding: 20px; 
+            color: #FFFFFF;
         }
-        
+
         .container { 
-            /* Enable container queries to track this box's width */
-            container-type: inline-size; 
             max-width: 900px; 
             margin: auto; 
-            padding: 30px 20px; 
-            background: #5C6971; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 40px 20px; 
+            background: #1C1C1C; /* Unified Gray/Black Inner */
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             
-            /* Center the content inside the container */
+            /* Enable container queries based on THIS width */
+            container-type: inline-size; 
+            
+            /* Keep everything stacked and centered */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .title-image { 
-            width: 50%; 
-            height: auto; 
-            margin-bottom: 15px; 
-        }
-
-        .repo-link a { 
-            color: #FFFFFF; 
-            text-decoration: none; 
-            font-weight: bold; 
-        }
-
-        /* --- THE FLUID EMBED CONTENT --- */
-        .embed-content {
-            margin: 25px 0;
+        /* --- THE FLUID APP BUFFER --- */
+        #app-buffer {
+            /* Logic: Scale based on 95% of the container width vs raw iframe width */
+            --dynamic-scale: clamp(0.4, (95cqw / var(--raw-width)), 1.9);
+            
+            /* Force the buffer to occupy the EXACT physical space of the scaled app */
+            width: calc(var(--raw-width) * var(--dynamic-scale));
+            height: calc(var(--raw-height) * var(--dynamic-scale));
+            
+            margin: 30px auto;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            /* Ensure there is space for the scaled content */
-            min-height: calc(var(--embed-raw-height) * 0.5); 
         }
 
-        iframe {
-            width: var(--embed-raw-width);
-            height: var(--embed-raw-height);
+        #app-buffer iframe {
+            width: var(--raw-width);
+            height: var(--raw-height);
             border: none;
-            border-radius: 8px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            border-radius: 3px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            position: absolute;
+            background: #5C6971;
 
-            /* DYNAMIC SCALE: 
-               Takes 90% of the current container width (100cqw) 
-               and divides it by the iframe's original width to get the scale ratio. */
-            --dynamic-scale: clamp(0.5, (90cqw / var(--embed-raw-width)), 1.5);
-            
+            /* Apply the scale from the center */
             transform: scale(var(--dynamic-scale));
             transform-origin: center center;
         }
 
+        .title-image { width: 50%; height: auto; margin-bottom: 20px; }
+        
+        .repo-link { font-size: 18px; line-height: 1.6; margin: 0; }
+        .repo-link b { color: #FFFFFF; }
+        .repo-link a { color: #2F8CF9; text-decoration: none; }
+        .repo-link a:hover { text-decoration: underline; }
+
+        .footer-logo { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -86,16 +88,18 @@
         <img src="assets/randomizerlogostatic.png" alt="SCR Randomizer" class="title-image">
         
         <p class="repo-link">
-            Welcome! <b text-color="#2F8CF9">Click the screen to start.</b> <br> Visit the repository: <a href="https://github.com/scr-randomizer/home/">https://github.com/scr-randomizer/home/</a>
+            Welcome! <b>Click the screen to start.</b><br>
+            View the repository here: 
+            <a href="https://github.com/scr-randomizer/home/">github.com/scr-randomizer/home/</a>
         </p>
         
-        <div class="embed-content">
+        <div id="app-buffer">
             <iframe src="https://studio.code.org/projects/applab/oX2jWo6MP1MyG8B7RbwRQEXkhEfASOZKkOQTkTyByxR/embed?nosource"></iframe>
         </div>
 
-        <div style="margin-top: 10px;">
+        <div class="footer-logo">
             <a href='https://ko-fi.com/R6R71RH2ZF' target='_blank'>
-                <img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee' />
+                <img height='36' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' alt='Buy Me a Coffee' />
             </a>
         </div>
     </div>
